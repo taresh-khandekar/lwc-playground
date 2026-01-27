@@ -2,7 +2,7 @@ import { LightningElement, track, api, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-const FIELDS_TO_TRACK= ['Account.Rating','Account.AccountNumber','Account.Type'];
+const FIELDS_TO_TRACK= ['Account.Rating','Account.Industry','Account.Type'];
 
 export default class LwcTrigger extends LightningElement {
 
@@ -12,7 +12,7 @@ export default class LwcTrigger extends LightningElement {
 
     boolTriggerExecuted = false;
     oldMap = new Map();
-    FIELDS_API = ['Rating','AccountNumber','Type'];
+    FIELDS_API = ['Rating','Industry','Type'];
 
     @wire(getRecord,{ recordId: '$recordId', fields: FIELDS_TO_TRACK })
     wiredRecord({ error, data }) {
@@ -25,9 +25,11 @@ export default class LwcTrigger extends LightningElement {
             if(this.oldMap.size === 0){
                 this.generateOldNewMap('old', data);
             }
-            
+            let oldVal = '';
+            let newVal = '';
             this.FIELDS_API.forEach(element => {
-                let oldVal = this.oldMap.get('old_'+element)
+                oldVal = this.oldMap.get('old_'+element);
+                newVal = this.newMap.get('new_'+element);
                 if(!this.boolTriggerExecuted && oldVal 
                     && oldVal !== this.newMap.get('new_'+element)){
                     this.updatedFieldsAPI.push(element);
@@ -36,14 +38,18 @@ export default class LwcTrigger extends LightningElement {
             });
             if(this.boolTriggerExecuted){
                 this.boolTriggerExecuted = false;
-                this.showNotification('info','Trigger Executed successfully:' + this.updatedFieldsAPI);
+                console.log('New Value ==>',newVal);
+                console.log('Old Value ==>',oldVal);
+                this.showNotification('info','Field changed: ' + this.updatedFieldsAPI);
             }
         }
     }
 
     generateOldNewMap(context, data){
         console.log('context ==>',context);
+        console.log('data ==>',data);
         let InnovationPortfolio = data.fields;
+        console.log('InnovationPortfolio ==>',InnovationPortfolio);
         this.FIELDS_API.forEach(element => {
             let displayValue = InnovationPortfolio[element].displayValue;
             let val = displayValue || InnovationPortfolio[element].value;
