@@ -1,0 +1,256 @@
+<template>
+    <lightning-card>
+        <h3 slot="title">{title}</h3>
+        
+        <!-- Loading Spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+        
+        <!-- Error Message -->
+        <template if:true={errorMessage}>
+            <div class="slds-box slds-theme_alert-texture slds-theme_error slds-m-bottom_medium">
+                <p class="slds-text-color_error">
+                    <lightning-icon icon-name="utility:error" size="x-small"></lightning-icon>
+                    {errorMessage}
+                </p>
+            </div>
+        </template>
+        
+        <!-- Form Fields -->
+        <template if:false={isLoading}>
+            <lightning-layout multiple-rows="true" pull-padded="true">
+                <template for:each={fields} for:item="field">
+                        <lightning-layout-item key={field.fieldPath} size="12" small-device-size="12" large-device-size="6" padding="horizontal-medium">
+                        
+                                <!-- TEXT FIELDS (String/Text) -->
+                                <template if:true={field.typeFlags.isString}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="text"
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- TEXT AREA FIELDS -->
+                                <template if:true={field.typeFlags.isTextarea}>
+                                <div class="slds-form-element">
+                                        <lightning-textarea
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-textarea>
+                                </div>
+                                </template>
+                                
+                                <!-- RICH TEXT AREA FIELDS -->
+                                <template if:true={field.typeFlags.isRichTextarea}>
+                                <div class="slds-form-element">
+                                        <lightning-textarea
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-textarea>
+                                </div>
+                                </template>
+                                
+                                <!-- NUMBER FIELDS (Integer, Double, Currency, Percent) -->
+                                <template if:true={field.typeFlags.isInteger}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="number"
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- CURRENCY FIELDS -->
+                                <template if:true={field.typeFlags.isCurrency}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="number"
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        step="0.01"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- DECIMAL/DOUBLE FIELDS -->
+                                <template if:true={field.typeFlags.isDouble}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="number"
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        step="0.01"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- PERCENT FIELDS -->
+                                <template if:true={field.typeFlags.isPercent}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="number"
+                                        label={field.fieldLabel}
+                                        placeholder={field.placeholder}
+                                        step="0.01"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- DATE FIELDS -->
+                                <template if:true={field.typeFlags.isDate}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="date"
+                                        label={field.fieldLabel}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- DATETIME FIELDS -->
+                                <template if:true={field.typeFlags.isDatetime}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="datetime-local"
+                                        label={field.fieldLabel}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- PICKLIST FIELDS -->
+                                <template if:true={field.typeFlags.isPicklist}>
+                                <lightning-combobox
+                                        label={field.fieldLabel}
+                                        placeholder="Select an option"
+                                        options={field.picklistValues}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                </lightning-combobox>
+                                </template>
+                                
+                                <!-- MULTIPICKLIST FIELDS -->
+                                <template if:true={field.typeFlags.isMultiPicklist}>
+                                <div class="slds-form-element">
+                                        <lightning-dual-listbox
+                                        label={field.fieldLabel}
+                                        source-label="Available"
+                                        selected-label="Selected"
+                                        options={field.picklistValues}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-dual-listbox>
+                                </div>
+                                </template>
+                                
+                                <!-- BOOLEAN/CHECKBOX FIELDS -->
+                                <template if:true={field.typeFlags.isBoolean}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="checkbox"
+                                        label={field.fieldLabel}
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- URL FIELDS -->
+                                <template if:true={field.typeFlags.isUrl}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="url"
+                                        label={field.fieldLabel}
+                                        placeholder="https://example.com"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- EMAIL FIELDS -->
+                                <template if:true={field.typeFlags.isEmail}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="email"
+                                        label={field.fieldLabel}
+                                        placeholder="example@example.com"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                                <!-- PHONE FIELDS -->
+                                <template if:true={field.typeFlags.isPhone}>
+                                <div class="slds-form-element">
+                                        <lightning-input
+                                        type="tel"
+                                        label={field.fieldLabel}
+                                        placeholder="Phone number"
+                                        required={field.required}
+                                        data-field-path={field.fieldPath}
+                                        onchange={handleFieldChange}>
+                                        </lightning-input>
+                                </div>
+                                </template>
+                                
+                        </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </template>
+
+        <hr/>
+        <lightning-layout horizontal-align="space">
+            <lightning-layout-item>
+                <template if:false={isFirstStep}>
+                    <lightning-button onclick={navigationStep} data-step="previous" label="Previous"></lightning-button>
+                </template>
+            </lightning-layout-item>
+            <lightning-layout-item>
+                <template if:false={isLastStep}>
+                    <lightning-button onclick={navigationStep} data-step="next" label="Next"></lightning-button>
+                </template>
+                <template if:true={isLastStep}>
+                    <lightning-button onclick={saveResult} data-step="submit" variant="brand" label="Submit"></lightning-button>
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
+        
+    </lightning-card>
+</template>

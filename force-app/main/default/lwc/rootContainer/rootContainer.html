@@ -1,0 +1,15 @@
+<template>
+    <lightning-card>
+        <p>
+            <lightning-progress-indicator current-step={currentStep} type="base" variant="base">
+                <template for:each={steps} for:item="step">
+                    <lightning-progress-step label={step.Label} value={step.Sequence} key={step.Label}></lightning-progress-step>
+                </template>
+            </lightning-progress-indicator>
+        </p>
+        <lwc:component lwc:spread={fieldsJson} 
+            lwc:is={componentConstructor}
+            onnavclick={navigationStep}>
+        </lwc:component>
+    </lightning-card>
+</template>
